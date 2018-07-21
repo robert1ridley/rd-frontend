@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Alert } from 'react-native';
 import { Form, Item, Input, Button, Text, Picker, Icon, Label, View } from 'native-base';
 import { darkBlue, darkGreen, white, red } from '../helpers/colors';
 import { BASE_URL } from 'react-native-dotenv';
@@ -22,7 +22,8 @@ class SignUp extends React.Component {
   }
 
   onSubmit = () => {
-    const { user_name, password, age, userError, passwordError, ageError } = this.state;
+    const { navigation } = this.props;
+    const { user_name, password, age } = this.state;
     const payload = {
       user_name: user_name,
       password: password,
@@ -38,9 +39,26 @@ class SignUp extends React.Component {
     .then(processResponse)
     .then(res => {
       const { data } = res;
-      console.log(data)
       if(data.token){
         setWebToken(data.token)
+        this.setState({
+          userError: null,
+          passwordError: null,
+          ageError: null
+        })
+        Alert.alert(
+          data.message,
+          'Login to your account?',
+          [
+            {
+              text: 'Yes', onPress: () => navigation.navigate(
+                'HomeTabs'
+              )
+            },
+            {text: 'No'},
+          ],
+          { cancelable: false }
+        )
       }
       if(data.error){
         this.setState({

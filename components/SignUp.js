@@ -1,15 +1,18 @@
 import React from 'react';
 import { StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { Form, Item, Input, Button, Text, Picker, Icon, Label } from 'native-base';
-import { darkBlue, darkGreen, white } from '../helpers/colors';
+import { Form, Item, Input, Button, Text, Picker, Icon, Label, View } from 'native-base';
+import { darkBlue, darkGreen, white, red } from '../helpers/colors';
 import { BASE_URL } from 'react-native-dotenv';
-import { processResponse } from '../helpers/utils';
+import { processResponse, setWebToken } from '../helpers/utils';
 
 class SignUp extends React.Component {
   state = {
     user_name: "",
     password: "",
-    age: "3"
+    age: "3",
+    userError: null,
+    passwordError: null,
+    ageError: null,
   };
 
   onValueChange(value) {
@@ -19,7 +22,7 @@ class SignUp extends React.Component {
   }
 
   onSubmit = () => {
-    const { user_name, password, age } = this.state;
+    const { user_name, password, age, userError, passwordError, ageError } = this.state;
     const payload = {
       user_name: user_name,
       password: password,
@@ -34,9 +37,18 @@ class SignUp extends React.Component {
     })
     .then(processResponse)
     .then(res => {
-      const { statusCode, data } = res;
-      console.log("statusCode",statusCode);
-      console.log("data",data);
+      const { data } = res;
+      console.log(data)
+      if(data.token){
+        setWebToken(data.token)
+      }
+      if(data.error){
+        this.setState({
+          userError: data.error.user_name,
+          passwordError: data.error.password,
+          ageError: data.error.age
+        })
+      }
     })
     .catch(err => {
       console.log(err)
@@ -56,6 +68,12 @@ class SignUp extends React.Component {
               onChangeText={(user_name) => this.setState({user_name})}
             />
           </Item>
+          {
+            this.state.userError &&
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorMessage}>{this.state.userError}</Text>
+            </View>
+          }
           <Item style={styles.inputContainer} stackedLabel underline>
             <Input
               placeholder="Password"
@@ -65,6 +83,12 @@ class SignUp extends React.Component {
               onChangeText={(password) => this.setState({password})}
             />
           </Item>
+          {
+            this.state.passwordError &&
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorMessage}>{this.state.passwordError}</Text>
+            </View>
+          }
           <Label style={[styles.inputContainer, styles.label]}>Age</Label>
           <Picker
             mode="dropdown"
@@ -81,6 +105,12 @@ class SignUp extends React.Component {
             <Picker.Item label="6" value="6" />
             <Picker.Item label="7" value="7" />
           </Picker>
+          {
+            this.state.ageError &&
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorMessage}>{this.state.ageError}</Text>
+            </View>
+          }
         </Form>
         <Button style={styles.button} block onPress={this.onSubmit}>
           <Text>Sign Up</Text>
@@ -108,6 +138,12 @@ const styles = StyleSheet.create({
   button: {
     margin: 20,
     backgroundColor: darkBlue
+  },
+  errorContainer: {
+    marginLeft: 20
+  },
+  errorMessage: {
+    color: red
   }
 })
 

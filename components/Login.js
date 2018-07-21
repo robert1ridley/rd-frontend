@@ -2,8 +2,35 @@ import React from 'react';
 import { StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { Form, Item, Input, Button, Text } from 'native-base';
 import { darkBlue, darkGreen, white } from '../helpers/colors';
+import { getWebToken } from '../helpers/utils';
+import { BASE_URL } from 'react-native-dotenv';
 
 class Login extends React.Component {
+  componentDidMount(){
+    const { navigation } = this.props;
+    getWebToken()
+    .then(res => {
+      const token = JSON.parse(res);
+      fetch(`${BASE_URL}/userprofile`, { 
+        headers: { 
+          'content-type': 'application/json',
+          'x-access-token': token
+        },
+        method: "GET"
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        if(data.user_name){
+          navigation.navigate(
+            'HomeTabs'
+          )
+        }
+      });
+  })
+  .catch(err => console.log(err));
+}
+
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>

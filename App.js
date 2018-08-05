@@ -7,6 +7,7 @@ import SignUp from './components/SignUp';
 import Profile from './components/Profile';
 import CurrentClasses from './components/CurrentClasses';
 import Messages from './components/Messages';
+import Logout from './components/Logout';
 import { grey, darkBlue, darkGreen, white } from './helpers/colors';
 
 const Tabs = createBottomTabNavigator({
@@ -49,29 +50,32 @@ const HomeTabs = createBottomTabNavigator({
     screen: Profile,
     navigationOptions: {
       tabBarLabel: 'Profile',
-      tabBarIcon: ({ tintColor }) => <Entypo name='user' size={30} color={tintColor} />
+      tabBarIcon: ({ tintColor }) => <Entypo name='user' size={30} color={tintColor} />,
+      headerLeft: null
     },
   },
   CurrentClasses: {
     screen: CurrentClasses,
     navigationOptions: {
       tabBarLabel: 'Classes',
-      tabBarIcon: ({ tintColor }) => <MaterialIcons name='class' size={30} color={tintColor} />
+      tabBarIcon: ({ tintColor }) => <MaterialIcons name='class' size={30} color={tintColor} />,
+      headerLeft: null
     },
   },
   Messages: {
     screen: Messages,
     navigationOptions: {
       tabBarLabel: 'Messages',
-      tabBarIcon: ({ tintColor }) => <Entypo name='chat' size={30} color={tintColor} />
+      tabBarIcon: ({ tintColor }) => <Entypo name='chat' size={30} color={tintColor} />,
+      headerLeft: null
     },
   },
   Logout: {
-    //Fix to go to logout
-    screen: Messages,
+    screen: Logout,
     navigationOptions: {
       tabBarLabel: 'Log out',
-      tabBarIcon: ({ tintColor }) => <Entypo name='log-out' size={30} color={tintColor} />
+      tabBarIcon: ({ tintColor }) => <Entypo name='log-out' size={30} color={tintColor} />,
+      headerLeft: null
     },
   },
 }, {
